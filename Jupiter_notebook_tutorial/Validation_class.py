@@ -144,7 +144,7 @@ class prep_data():
             
             # Randomly sample n_samples rows from the filtered data
             if len(data) >= self.n_samples:
-                #sampled_data = data.sample(n=self.n_samples, random_state=np.random.randint(0, len(data)))
+                #sampled_data = data.sample(n=self.n_samples, random_state=42)
                 sampled_data = data.iloc[np.linspace(0, len(data) - 1, self.n_samples).astype(int)]
             else:
                 # If there aren't enough samples after filtering, use all available rows
@@ -280,7 +280,7 @@ class prep_data_surrogate():
             
             # Randomly sample n_samples rows from the filtered data
             if len(data) >= self.n_samples:
-                #sampled_data = data.sample(n=self.n_samples, random_state=np.random.randint(0, len(data)))
+                #sampled_data = data.sample(n=self.n_samples, random_state=42)
                 sampled_data = data.iloc[np.linspace(0, len(data) - 1, self.n_samples).astype(int)]
             else:
                 # If there aren't enough samples after filtering, use all available rows
@@ -319,12 +319,12 @@ class prep_data_surrogate():
             y_train = np.concatenate((y_train, y_val), axis=0)
         
         # Print the shapes of the datasets
-        print('Training data')
-        print("Training data shape (X_train):", X_train.shape)
-        print("Training labels shape (y_train):", y_train.shape)
-        print("Validation data")
-        print("Validation data shape (X_val):", X_val.shape)
-        print("Validation labels shape (y_val):", y_val.shape)
+        #print('Training data')
+        #print("Training data shape (X_train):", X_train.shape)
+        #print("Training labels shape (y_train):", y_train.shape)
+        #print("Validation data")
+        #print("Validation data shape (X_val):", X_val.shape)
+        #print("Validation labels shape (y_val):", y_val.shape)
         
         return X_train, y_train, X_val, y_val
     
@@ -335,9 +335,20 @@ class prep_data_surrogate():
         
         # Obtain predictions from PINN
         if PINN is not None:
+            # Start time
+            start_time = m_time.time()
+
+            # Obtain predictions
             Predictions = PINN(X_all)
+            
+            # End time
+            end_time = m_time.time()
+
+            # Calculate the elapsed time
+            execution_time = end_time - start_time
         else:
             Predictions = None
+            execution_time = None
         
         # Compare predictions and provide average error
         if PINN is not None:
@@ -383,7 +394,7 @@ class prep_data_surrogate():
             error_max = None
             error_peak = None
 
-        return X_all, y_all, Predictions, error_average, error_max, error_peak
+        return X_all, y_all, Predictions, error_average, error_max, error_peak, execution_time
     
     
 
@@ -480,6 +491,7 @@ class prep_data_cooling():
             # Combine the training and validation data
             X_train = np.concatenate((X_train, X_val), axis=0)
             y_train = np.concatenate((y_train, y_val), axis=0)
+            
         
         # Print the shapes of the datasets
         print('Training data')
@@ -558,7 +570,7 @@ class prep_data_cooling_surrogate():
             
             # Randomly sample n_samples rows from the filtered data
             if len(data) >= self.n_samples:
-                #sampled_data = data.sample(n=self.n_samples, random_state=np.random.randint(0, len(data)))
+                #sampled_data = data.sample(n=self.n_samples, random_state=42)
                 sampled_data = data.iloc[np.linspace(0, len(data) - 1, self.n_samples).astype(int)]
             else:
                 # If there aren't enough samples after filtering, use all available rows
